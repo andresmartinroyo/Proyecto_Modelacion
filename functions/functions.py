@@ -21,5 +21,11 @@ def create_graph(path):
     edges_list = read_csv(path)
     for edge in edges_list:
         graph.add_edge(int(edge[0]),int(edge[1]),int(edge[2]))
-    
+    graph.adjacency_matrix = graph.get_adjacency_matrix()
+    graph.dijkstras_matrix = graph.get_dijkstras_matrix()
+    for node in graph.adjacency_matrix:
+        print(node)
+    for node in graph.dijkstras_matrix:
+        print(node)
+        
     return graph
