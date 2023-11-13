@@ -7,4 +7,4 @@ class Node:
     """
     def __init__(self, name, position_adj_list):
         self.name = name
-        self.postion_adj_list = position_adj_list
+        self.postion_adj_list = int(position_adj_list)

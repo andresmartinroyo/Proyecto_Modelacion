@@ -18,5 +18,3 @@ class Graph:
             if self.edges.get(origin) == None:
                 self.edges[origin] = []
             self.edges[origin].append([destination,weight])
-
-    

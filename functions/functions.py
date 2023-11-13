@@ -20,6 +20,6 @@ def create_graph(path):
         graph.add_node(new_node)
     edges_list = read_csv(path)
     for edge in edges_list:
-        graph.add_edge(edge[0],edge[1],edge[2])
+        graph.add_edge(int(edge[0]),int(edge[1]),int(edge[2]))
     
     return graph
