@@ -20,3 +20,12 @@ class Graph:
             if self.edges.get(origin) == None:
                 self.edges[origin] = []
             self.edges[origin].append([destination,weight])
+
+    def copy_graph(self):
+        copy = Graph()
+        copy.nodes = self.nodes
+        for i in range(0,len(copy.nodes)):
+            copy.edges[i] = []
+        for node, arcs in self.edges.items():
+            copy.edges[node].append([arcs[0],arcs[1]])
+        return copy

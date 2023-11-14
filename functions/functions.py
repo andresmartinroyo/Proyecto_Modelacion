@@ -90,7 +90,38 @@ def dijkstra(graph: Graph, source, destination):
     path = []
     current_node = destination
     while current_node != None:
-        path.append(current_node)
+        path.append([predecessors[current_node],current_node])
         current_node = predecessors[current_node]
     path.reverse()
     return path, distances[destination]
+
+
+def compare_paths(j_graph : Graph, a_graph : Graph, destination):
+    j_path, j_cost = dijkstra(j_graph, 7, destination)
+    a_path, a_cost = dijkstra(a_graph,20, destination)
+    intersection = intersect(j_path,a_path)
+    if len(intersection) == 0:
+        return j_path, j_cost, a_path, a_cost
+    else:
+        if j_cost < a_cost:
+            j_graph_copy = j_graph.copy_graph()
+            for component in intersection:
+                for arcs in j_graph_copy[component]:
+                    if component[1] == arcs[0]:
+                        arcs[1] = float("inf")
+            return compare_paths(j_graph_copy,a_graph,destination)
+        else :
+            a_graph_copy = a_graph.copy_graph()
+            for component in intersection:
+                for arcs in j_graph_copy[component]:
+                    if component[1] == arcs[0]:
+                        arcs[1] = float("inf")
+            return compare_paths(j_graph,a_graph_copy,destination)
+        
+def intersect(list1 : list, list2: list):
+    intersection = []
+    for element1 in list1:
+        for element2 in list2:
+            if element1[0] == element2[0] and element1[1] == element2[1]:
+                intersection.append(element2)
+    return intersection
