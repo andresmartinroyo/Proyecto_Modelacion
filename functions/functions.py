@@ -106,14 +106,14 @@ def compare_paths(j_graph : Graph, a_graph : Graph, destination):
         if j_cost < a_cost:
             j_graph_copy = j_graph.copy_graph()
             for component in intersection:
-                for arcs in j_graph_copy[component]:
+                for arcs in j_graph_copy.edges[component[0]]:
                     if component[1] == arcs[0]:
                         arcs[1] = float("inf")
             return compare_paths(j_graph_copy,a_graph,destination)
         else :
             a_graph_copy = a_graph.copy_graph()
             for component in intersection:
-                for arcs in j_graph_copy[component]:
+                for arcs in a_graph_copy.edges[component[0]]:
                     if component[1] == arcs[0]:
                         arcs[1] = float("inf")
             return compare_paths(j_graph,a_graph_copy,destination)

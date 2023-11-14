@@ -27,5 +27,6 @@ class Graph:
         for i in range(0,len(copy.nodes)):
             copy.edges[i] = []
         for node, arcs in self.edges.items():
-            copy.edges[node].append([arcs[0],arcs[1]])
+            for arc in arcs:
+                copy.edges[node].append([arc[0],arc[1]])
         return copy
