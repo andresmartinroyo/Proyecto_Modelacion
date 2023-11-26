@@ -1,4 +1,5 @@
 from functions.functions import *
+from interface.interface import  start
 
 def main():
     javier_graph = create_graph("bd/javier_adj_list.csv")
@@ -9,6 +10,7 @@ def main():
     j_path, a_path = find_quickest_paths(javier_graph,andreina_graph,0)
     print(j_path)
     print(a_path)
+    start(javier_graph)
 
 
 
