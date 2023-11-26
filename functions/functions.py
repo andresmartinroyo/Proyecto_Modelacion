@@ -109,7 +109,7 @@ def dijkstra(graph: Graph, source, destination):
     path = []
     current_node = destination
     while current_node != None:
-        path.append([predecessors[current_node],current_node])
+        path.append([predecessors[current_node],current_node,distances[current_node]])
         current_node = predecessors[current_node]
     path.reverse()
     return path, distances[destination]
@@ -136,7 +136,56 @@ def compare_paths(j_graph : Graph, a_graph : Graph, destination):
                     if component[1] == arcs[0]:
                         arcs[1] = float("inf")
             return compare_paths(j_graph,a_graph_copy,destination)
+
+def find_quickest_paths(j_graph : Graph, a_graph : Graph, destination):
+    j_path, j_cost = dijkstra(j_graph, 7, destination)
+    a_path, a_cost = dijkstra(a_graph,20, destination)
+    if j_cost > a_cost:
+        delay_time = j_cost - a_cost
+        for i in range(0,len(a_path)):
+            a_path[i][2] += delay_time
+    elif a_cost > j_cost:
+        delay_time = a_cost - j_cost
+        for i in range(0,len(j_path)):
+            j_path[i][2] += delay_time
+    
+    intersection = intersect(j_path,a_path)
+    if len(intersection) > 0:
+        # Ahora necesito ver si el tiempo en el que ambos comparten calle es el mismo restando el timepo en le que salen de la calle menos el que entran
+        for i in range(1,len(j_path)):
+            if j_path[i][0] == intersection[0][0]:
+                j_leaving = j_path[i][2]
+                j_incoming = j_path[i-1][2]
+                break
+
+        for i in range(1,len(a_path)):
+            if a_path[i][0] == intersection[0][0]:
+                a_leaving = a_path[i][2]
+                a_incoming = a_path[i-1][2]
+                break
         
+        if a_incoming < j_leaving and a_leaving > j_incoming:
+            if a_cost < j_cost:
+                a_graph_copy = a_graph.copy_graph()
+                for arcs in a_graph_copy.edges[intersection[0][0]]:
+                    if intersection[0][1] == arcs[0]:
+                        arcs[1] = float("inf")
+                        break
+                return find_quickest_paths(j_graph,a_graph_copy,destination)
+
+            else:
+                j_graph_copy = j_graph.copy_graph()
+                for arcs in j_graph_copy.edges[intersection[0][0]]:
+                    if intersection[0][1] == arcs[0]:
+                        arcs[1] = float("inf")
+                        break
+                return find_quickest_paths(j_graph_copy,a_graph,destination)
+        else:
+            return j_path,a_path
+
+    else:
+        return j_path,a_path
+
 def intersect(list1 : list, list2: list):
     intersection = []
     for element1 in list1:
