@@ -5,6 +5,7 @@ class Graph:
     def __init__(self):
         self.nodes = {}
         self.edges = {}
+        self.edges2 = {}
         self.adjacency_matrix = None
         self.dijkstras_matrix = None
         
@@ -20,6 +21,12 @@ class Graph:
             if self.edges.get(origin) == None:
                 self.edges[origin] = []
             self.edges[origin].append([destination,weight])
+
+    def add_edge2(self, origin, destination, weight):
+        if origin in self.nodes and destination in self.nodes:
+            if self.edges2.get(origin) == None:
+                self.edges2[origin] = []
+            self.edges2[origin].append([destination,weight])
 
     def copy_graph(self):
         copy = Graph()
