@@ -13,25 +13,6 @@ def read_csv(path):
         f.close()
         return content
     
-def creat_original_graph(graph_1, graph_2):
-    nodes_list = read_csv("bd/lista_de_nodos.csv")
-    graph = Graph()
-    for node in nodes_list:
-        new_node = Node(node[0],node[1])
-        graph.add_node(new_node)
-
-    edges_list = read_csv(graph_1)
-    for edge in edges_list:
-        graph.add_edge(int(edge[0]),int(edge[1]),int(edge[2]))
-        
-    edges2_list = read_csv(graph_2)
-    for edge2 in edges2_list:
-        graph.add_edge2(int(edge2[0]),int(edge2[1]),int(edge2[2]))
-
-    return graph
-    
-
-    
 def create_graph(path):
     nodes_list = read_csv("bd/lista_de_nodos.csv")
     graph = Graph()
@@ -73,7 +54,6 @@ def find_closest_neighbors(neighbors : list):
     return minimum, index
 
 def dijkstra(graph: Graph, source, destination):
-
     # Inicialización
     visited = set()
     distances = {}
