@@ -148,17 +148,28 @@ def find_quickest_paths(j_graph : Graph, a_graph : Graph, destination):
         if a_incoming < j_leaving and a_leaving > j_incoming:
             if a_cost < j_cost:
                 a_graph_copy = a_graph.copy_graph()
-                for arcs in a_graph_copy.edges[intersection[0][0]]:
-                    if intersection[0][1] == arcs[0]:
-                        arcs[1] = float("inf")
+                founded = False
+                for component in intersection:
+                    for arcs in a_graph_copy.edges[component[0]]:
+                        if component[1] == arcs[0]:
+                            arcs[1] = float("inf")
+                            founded = True
+                            break
+                    if founded:
                         break
+
                 return find_quickest_paths(j_graph,a_graph_copy,destination)
 
             else:
                 j_graph_copy = j_graph.copy_graph()
-                for arcs in j_graph_copy.edges[intersection[0][0]]:
-                    if intersection[0][1] == arcs[0]:
-                        arcs[1] = float("inf")
+                founded = False
+                for component in intersection:
+                    for arcs in j_graph_copy.edges[component[0]]:
+                        if component[1] == arcs[0]:
+                            arcs[1] = float("inf")
+                            founded = True
+                            break
+                    if founded:
                         break
                 return find_quickest_paths(j_graph_copy,a_graph,destination)
         else:
