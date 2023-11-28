@@ -97,13 +97,17 @@ def clearRows(list):
         widgets = frame.grid_slaves(column=column)
         for widget in widgets:
             widget.grid_forget()
+    
+
+    for widget in graphFrame.winfo_children():
+        widget.destroy()
 
 def printRoute(graph, destination):
-    clearRows([4, 5, 6, 7, 8, 10])
-
+    clearRows([4, 5, 6, 7, 8])
     if (destination.get() != ""):
 
         destinationT = ""
+        graphFrame = ttk.Frame(interface)
     
         try:
             #shortest_distance, shortest_path = graph.findShortestStopPath(
@@ -129,6 +133,13 @@ def printRoute(graph, destination):
                     road[0] = 'J'
                 road[1] = graph.nodes[road[1]]
 
+            for road in a_path:
+                if(road[0] != None):
+                    road[0] = graph.nodes[road[0]]
+                else:
+                    road[0] = 'A'
+                road[1] = graph.nodes[road[1]]
+
             #for road in a_path:
             #    if(road[0] != None):
             #        road[0] = graph.nodes.items[road[0]]
@@ -146,28 +157,50 @@ def printRoute(graph, destination):
             #    else:
             #        finalPath += node
 
-            drawGraphNX(graph, j_path, a_path)
+            drawGraphNX(graph, j_path, a_path, andreina_graph)
         
         except ValueError as e:
             errorDialog(e)
             print("Error")
             drawGraph(graph)
+            
+            origin = ttk.Combobox(frame, values=origins)
+            origin.grid(row=1, column=0, padx=80)
+        
+            travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
+            graph, origin), style="TButton")
+            travel.grid(row=1, column=4, columnspan=4)
     else:
         validateDialog()
         drawGraph(graph)
+        origin = ttk.Combobox(frame, values=origins)
+        origin.grid(row=1, column=0, padx=80)
+    
+        travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
+        graph, origin), style="TButton")
+        travel.grid(row=1, column=4, columnspan=4)
 
-def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list):
+def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list, andreina_graph: Graph):
     g = nx.Graph()
+    andreinaGraph = nx.Graph()
 
     # Agregar nodos y aristas al grafos
     for node, neighbors in graph.edges.items():
         for neighbor, cost in neighbors:
             g.add_edge(graph.nodes[node],graph.nodes[neighbor], weight=cost)
 
+    for node, neighbors in andreina_graph.edges.items():
+        for neighbor, cost in neighbors:
+            andreinaGraph.add_edge(graph.nodes[node],graph.nodes[neighbor], weight=cost)
+
     path =[]
+    adreinaPath = []
 
     for road in shortestPath:
         path.append(road[1])
+
+    for road in shortestPath2:
+        adreinaPath.append(road[1])
 
     # Crear un layout para el grafo
     posNX = nx.spring_layout(g, seed=900)
@@ -180,6 +213,15 @@ def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list):
 
     # Diccionario para agregarle le peso al camino usado
     edge_labels = {}
+
+    # Diccionario para elegir el color del path tomado para el camino mas corto
+    node_colors_shortestPath2 = {}
+
+    # Diccionario para elegir el color de los edges tomados para el camino mas corto
+    node_colors_shortestEdge2 = {}
+
+    # Diccionario para agregarle le peso al camino usado
+    edge_labels2 = {}
 
     # For loop para agregar los datos a cada diccionario
     for node in g.nodes():
@@ -222,6 +264,59 @@ def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list):
     colors_shortestEdge = [node_colors_shortestEdge.get(
         edge, 'gray') for edge in g.edges()]
 
+    for node in andreinaGraph.nodes():
+        origNode = ''
+        destNode = ''
+        if (node in adreinaPath):
+            # Verificamos si tiene visa para pintarlo de un color u otro
+            if (node == 'A'):
+                node_colors_shortestPath2[node] = 'green'
+            elif (node == 'BLP' or node == 'CMR' or node == 'DTD' or node == 'CS'):
+                node_colors_shortestPath2[node] = 'blue'
+            else:
+                node_colors_shortestPath2[node] = 'red'
+            # Obtenemos la posición del nodo actual en la lista del camino
+            pos = adreinaPath.index(node)
+            if (pos == 0):
+                node_colors_shortestPath2[node] = "green"
+            # Se verifica si el nodo que se está revisando es el último para poder setear correctamente el nodo origen y destino
+            if (pos == len(shortestPath2) - 1):
+                origNode = shortestPath2[pos - 1]
+                destNode = shortestPath2[pos]
+            else:
+                origNode = shortestPath2[pos]
+                destNode = shortestPath2[pos + 1]
+        else:
+            if (node in path):
+                if (node == 'J'):
+                    node_colors_shortestPath2[node] = 'green'
+                elif (node == 'BLP' or node == 'CMR' or node == 'DTD' or node == 'CS'):
+                    node_colors_shortestPath2[node] = 'blue'
+                else:
+                    node_colors_shortestPath2[node] = 'red'
+            else:
+                node_colors_shortestPath2[node] = "gray"
+                node_colors_shortestEdge2[node] = 'gray'
+            continue
+        # En caso de que node se encuentre en el camino más corto, se pinta de rojo su arista y se coloca su peso para ser visualizado
+        node_colors_shortestEdge2[(origNode[1], destNode[1])] = 'red'
+        node_colors_shortestEdge2[(destNode[1], origNode[1])] = 'red'
+        
+        edge_labels2[(origNode[1], destNode[1])] = str(
+            andreinaGraph[origNode[1]][destNode[1]]['weight'])
+
+    # Colores para el grafo
+    colors_shortestPath = [node_colors_shortestPath[node]
+                           for node in g.nodes()]
+    colors_shortestEdge = [node_colors_shortestEdge.get(
+        edge, 'gray') for edge in g.edges()]
+    
+    # Colores para el grafo
+    colors_shortestPath2 = [node_colors_shortestPath2[node]
+                           for node in andreinaGraph.nodes()]
+    colors_shortestEdge2 = [node_colors_shortestEdge2.get(
+        edge, 'gray') for edge in andreinaGraph.edges()]
+
     plt.clf()
     # Dibujar el grafo
     nx.draw(g, pos=posNX, with_labels=True, node_size=600, node_color=colors_shortestPath,
@@ -230,6 +325,21 @@ def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list):
     # Dibujar las etiquetas de las aristas
     nx.draw_networkx_edge_labels(
         g, posNX, edge_labels=edge_labels, font_color='black')
+    
+    # Dibujar el grafo
+    nx.draw(andreinaGraph, pos=posNX, with_labels=True, node_size=600, node_color=colors_shortestPath2,
+            font_size=10, edge_color=colors_shortestEdge2, width=1, alpha=0.7)
+
+    # Dibujar las etiquetas de las aristas
+    nx.draw_networkx_edge_labels(
+        andreinaGraph, posNX, edge_labels=edge_labels2, font_color='black')
+    
+    origin = ttk.Combobox(frame, values=origins)
+    origin.grid(row=1, column=0, padx=80)
+    
+    travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
+        graph, origin), style="TButton")
+    travel.grid(row=1, column=4, columnspan=4)
 
     # Agregar el canvas al lado derecho
     canvas = FigureCanvasTkAgg(plt.gcf(), master=graphFrame)
