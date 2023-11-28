@@ -27,28 +27,27 @@ def start(graph: Graph):
     frame = ttk.Frame(interface, style="TFrame")
     frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
+    title = ttk.Label(frame, text="Camino del amor",
+                      font=("Arial", 24), background="purple")
+    title.grid(row=0, column=0, columnspan=12, pady=10)
+
     # Título centrado
     title = ttk.Label(frame, text="Ayuda a Javier y Andreina a poder juntarse!",
-                      font=("Arial", 20), background="purple")
-    title.grid(row=0, column=0, columnspan=4, pady=10)
+                      font=("Arial", 14), background="purple")
+    title.grid(row=1, column=0, columnspan=4, pady=10)
 
     originsLabel = ttk.Label(frame, text="Destino:", style="TLabel")
-    originsLabel.grid(row=1, column=0, padx=10, sticky="w")
+    originsLabel.grid(row=2, column=0, padx=0, sticky="w")
     origins = originsList(graph)
     origin = ttk.Combobox(frame, values=origins)
-    origin.grid(row=1, column=0, padx=80)
+    origin.grid(row=2, column=0, padx=90)
 
     travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
         graph, origin), style="TButton")
-    travel.grid(row=1, column=4, columnspan=4)
+    travel.grid(row=2, column=4, columnspan=4)
 
-   # travel = ttk.Button(left_frame, text="Buscar vuelos", command=lambda: printRoute(
-    #    graph, origin, destination, visa, pathType), style="TButton")
-    #travel.grid(row=3, column=0, columnspan=4, pady=20)
-    
-    # Lado derecho
     graphFrame = ttk.Frame(interface)
-    graphFrame.grid(row=10, column=0, padx=10, pady=10, sticky="nsew")
+    graphFrame.grid(row=15, column=0, padx=10, pady=10, sticky="nsew")
 
     drawGraph(graph)
 
@@ -126,6 +125,9 @@ def printRoute(graph, destination):
             andreina_graph = create_graph("bd/andreina_adj_list.csv")
             j_path, a_path = find_quickest_paths(javier_graph,andreina_graph,destinationT)
 
+            min_j = j_path[-1][-1] - j_path[0][-1]
+            min_a = a_path[-1][-1] - a_path[0][-1]
+
             for road in j_path:
                 if(road[0] != None):
                     road[0] = graph.nodes[road[0]]
@@ -140,47 +142,72 @@ def printRoute(graph, destination):
                     road[0] = 'A'
                 road[1] = graph.nodes[road[1]]
 
-            #for road in a_path:
-            #    if(road[0] != None):
-            #        road[0] = graph.nodes.items[road[0]]
-            #    else:
-            #        road[0] = 'A'
-            #    road[1] = graph.nodes.items[road[1]]
-
-            #finalPath = ""
-            #index = 1
-            #scales = len(shortest_path)
-            #for node in shortest_path:
-            #    if index < scales:
-            #        finalPath += node + " ---> "
-            #        index += 1
-            #    else:
-            #        finalPath += node
-
-            drawGraphNX(graph, j_path, a_path, andreina_graph)
+            drawGraphNX(graph, j_path, a_path, andreina_graph,min_j,min_a)
         
         except ValueError as e:
             errorDialog(e)
             print("Error")
             drawGraph(graph)
             
+            style = ttk.Style()
+            style.configure("TLabel", font=("Arial", 18), background="purple")
+            style.configure("TButton", font=("Arial", 18))
+            style.configure("TFrame", background="purple")
+
+            # Lado izquierdo
+            frame = ttk.Frame(interface, style="TFrame")
+            frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+            title = ttk.Label(frame, text="Camino del amor",
+                            font=("Arial", 24), background="purple")
+            title.grid(row=0, column=0, columnspan=12, pady=10)
+
+            # Título centrado
+            title = ttk.Label(frame, text="Ayuda a Javier y Andreina a poder juntarse!",
+                            font=("Arial", 14), background="purple")
+            title.grid(row=1, column=0, columnspan=4, pady=10)
+
+            originsLabel = ttk.Label(frame, text="Destino:", style="TLabel")
+            originsLabel.grid(row=2, column=0, padx=0, sticky="w")
+            origins = originsList(graph)
             origin = ttk.Combobox(frame, values=origins)
-            origin.grid(row=1, column=0, padx=80)
-        
+            origin.grid(row=2, column=0, padx=90)
+
             travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
-            graph, origin), style="TButton")
-            travel.grid(row=1, column=4, columnspan=4)
+                graph, origin), style="TButton")
+            travel.grid(row=2, column=4, columnspan=4)
     else:
         validateDialog()
         drawGraph(graph)
-        origin = ttk.Combobox(frame, values=origins)
-        origin.grid(row=1, column=0, padx=80)
-    
-        travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
-        graph, origin), style="TButton")
-        travel.grid(row=1, column=4, columnspan=4)
+        style = ttk.Style()
+        style.configure("TLabel", font=("Arial", 18), background="purple")
+        style.configure("TButton", font=("Arial", 18))
+        style.configure("TFrame", background="purple")
 
-def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list, andreina_graph: Graph):
+        # Lado izquierdo
+        frame = ttk.Frame(interface, style="TFrame")
+        frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        title = ttk.Label(frame, text="Camino del amor",
+                        font=("Arial", 24), background="purple")
+        title.grid(row=0, column=0, columnspan=12, pady=10)
+
+        # Título centrado
+        title = ttk.Label(frame, text="Ayuda a Javier y Andreina a poder juntarse!",
+                        font=("Arial", 14), background="purple")
+        title.grid(row=1, column=0, columnspan=4, pady=10)
+
+        originsLabel = ttk.Label(frame, text="Destino:", style="TLabel")
+        originsLabel.grid(row=2, column=0, padx=0, sticky="w")
+        origins = originsList(graph)
+        origin = ttk.Combobox(frame, values=origins)
+        origin.grid(row=2, column=0, padx=90)
+
+        travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
+            graph, origin), style="TButton")
+        travel.grid(row=2, column=4, columnspan=4)
+
+def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list, andreina_graph: Graph,min_j : int, min_a:int):
     g = nx.Graph()
     andreinaGraph = nx.Graph()
 
@@ -334,12 +361,60 @@ def drawGraphNX(graph: Graph, shortestPath: list, shortestPath2: list, andreina_
     nx.draw_networkx_edge_labels(
         andreinaGraph, posNX, edge_labels=edge_labels2, font_color='black')
     
+    style = ttk.Style()
+    style.configure("TLabel", font=("Arial", 18), background="purple")
+    style.configure("TButton", font=("Arial", 18))
+    style.configure("TFrame", background="purple")
+
+    # Lado izquierdo
+    frame = ttk.Frame(interface, style="TFrame")
+    frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    title = ttk.Label(frame, text="Camino del amor",
+                      font=("Arial", 24), background="purple")
+    title.grid(row=0, column=0, columnspan=12, pady=10)
+
+    # Título centrado
+    title = ttk.Label(frame, text="Ayuda a Javier y Andreina a poder juntarse!",
+                      font=("Arial", 14), background="purple")
+    title.grid(row=1, column=0, columnspan=4, pady=10)
+
+    originsLabel = ttk.Label(frame, text="Destino:", style="TLabel")
+    originsLabel.grid(row=2, column=0, padx=0, sticky="w")
+    origins = originsList(graph)
     origin = ttk.Combobox(frame, values=origins)
-    origin.grid(row=1, column=0, padx=80)
-    
+    origin.grid(row=2, column=0, padx=90)
+
     travel = ttk.Button(frame, text="Buscar", command=lambda: printRoute(
         graph, origin), style="TButton")
-    travel.grid(row=1, column=4, columnspan=4)
+    travel.grid(row=2, column=4, columnspan=4)
+
+    destiny = shortestPath[-1][1]
+
+    if(destiny == "DTD"):
+        destiny = "Discoteca The Darkness"
+    elif(destiny == "BLP"):
+        destiny = "Bar La Pasión"
+    elif(destiny == "CMR"):
+        destiny = "Cervecería Mi Rolita"
+    elif(destiny == "CS"):
+        destiny = "Café Sensación"
+
+    javierText = ttk.Label(frame, text="Javier ha tardado {} minutos en llegar a {}".format(min_j,destiny), style="TLabel", font=14)
+    javierText.grid(row=3, column=0, padx=0, sticky="w")
+
+    AndreinaText = ttk.Label(frame, text="Andreina ha tardado {} minutos en llegar a {}".format(min_a,destiny), style="TLabel", font=14)
+    AndreinaText.grid(row=4, column=0, padx=0, sticky="w")
+
+    dif = ""
+
+    if(min_a>min_j):
+        dif = "Javier tiene que esperar {} minutos".format(min_a-min_j)
+    else:
+        dif = "Andreina tiene que esperar {} minutos".format(min_j-min_a)
+
+    diffText = ttk.Label(frame, text="Para llegar al mismo tiempo, {}".format(dif), style="TLabel", font=18)
+    diffText.grid(row=5, column=0, padx=0, sticky="w")
 
     # Agregar el canvas al lado derecho
     canvas = FigureCanvasTkAgg(plt.gcf(), master=graphFrame)
